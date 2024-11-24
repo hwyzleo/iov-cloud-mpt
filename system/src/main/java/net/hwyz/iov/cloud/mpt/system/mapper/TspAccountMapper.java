@@ -1,28 +1,27 @@
 package net.hwyz.iov.cloud.mpt.system.mapper;
 
 import net.hwyz.iov.cloud.mpt.common.core.domain.entity.SysUser;
-import net.hwyz.iov.cloud.mpt.common.core.domain.entity.TspUser;
+import net.hwyz.iov.cloud.mpt.common.core.domain.entity.TspAccount;
 
 import java.util.List;
 
 /**
- * TSP用户表 数据层
- * 
+ * TSP账号表 数据层
+ *
  * @author hwyz_leo
  */
-public interface TspUserMapper
-{
+public interface TspAccountMapper {
     /**
-     * 根据条件分页查询用户列表
-     * 
-     * @param sysUser 用户信息
-     * @return 用户信息集合信息
+     * 根据条件分页查询账号列表
+     *
+     * @param tspAccount 账号信息
+     * @return 账号信息集合信息
      */
-    public List<TspUser> selectUserList(TspUser sysUser);
+    public List<TspAccount> selectAccountList(TspAccount tspAccount);
 
     /**
      * 根据条件分页查询已配用户角色列表
-     * 
+     *
      * @param user 用户信息
      * @return 用户信息集合信息
      */
@@ -30,7 +29,7 @@ public interface TspUserMapper
 
     /**
      * 根据条件分页查询未分配用户角色列表
-     * 
+     *
      * @param user 用户信息
      * @return 用户信息集合信息
      */
@@ -38,7 +37,7 @@ public interface TspUserMapper
 
     /**
      * 通过用户名查询用户
-     * 
+     *
      * @param userName 用户名
      * @return 用户对象信息
      */
@@ -46,7 +45,7 @@ public interface TspUserMapper
 
     /**
      * 通过手机号码查询用户
-     * 
+     *
      * @param phoneNumber 手机号码
      * @return 用户对象信息
      */
@@ -54,7 +53,7 @@ public interface TspUserMapper
 
     /**
      * 通过邮箱查询用户
-     * 
+     *
      * @param email 邮箱
      * @return 用户对象信息
      */
@@ -62,7 +61,7 @@ public interface TspUserMapper
 
     /**
      * 通过用户ID查询用户
-     * 
+     *
      * @param userId 用户ID
      * @return 用户对象信息
      */
@@ -70,7 +69,7 @@ public interface TspUserMapper
 
     /**
      * 通过用户ID删除用户
-     * 
+     *
      * @param userId 用户ID
      * @return 结果
      */
@@ -78,7 +77,7 @@ public interface TspUserMapper
 
     /**
      * 批量删除用户信息
-     * 
+     *
      * @param ids 需要删除的数据ID
      * @return 结果
      */
@@ -86,7 +85,7 @@ public interface TspUserMapper
 
     /**
      * 修改用户信息
-     * 
+     *
      * @param user 用户信息
      * @return 结果
      */
@@ -94,7 +93,7 @@ public interface TspUserMapper
 
     /**
      * 新增用户信息
-     * 
+     *
      * @param user 用户信息
      * @return 结果
      */
@@ -102,7 +101,7 @@ public interface TspUserMapper
 
     /**
      * 校验用户名称是否唯一
-     * 
+     *
      * @param loginName 登录名称
      * @return 结果
      */

@@ -82,10 +82,10 @@
 	    		};
 	    		$('#scroll-up').toTop(opt);
 	    	}
-		    queryUserList();
+		    queryAccountList();
 		});
 
-		function queryUserList() {
+		function queryAccountList() {
 		    var options = {
 		        url: prefix + "/list",
 		        viewUrl: prefix + "/view/{id}",
@@ -173,7 +173,7 @@
 		});
 		
 		$('#btnRefresh').click(function() {
-			queryUserList();
+			queryAccountList();
 		});
 		
 		/* 自定义重置-表单重置/隐藏框/树节点选择色/搜索 */

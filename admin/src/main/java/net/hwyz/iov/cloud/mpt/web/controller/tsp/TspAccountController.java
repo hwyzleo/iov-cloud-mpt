@@ -7,7 +7,7 @@ import net.hwyz.iov.cloud.mpt.common.core.domain.Ztree;
 import net.hwyz.iov.cloud.mpt.common.core.domain.entity.SysDept;
 import net.hwyz.iov.cloud.mpt.common.core.domain.entity.SysRole;
 import net.hwyz.iov.cloud.mpt.common.core.domain.entity.SysUser;
-import net.hwyz.iov.cloud.mpt.common.core.domain.entity.TspUser;
+import net.hwyz.iov.cloud.mpt.common.core.domain.entity.TspAccount;
 import net.hwyz.iov.cloud.mpt.common.core.page.TableDataInfo;
 import net.hwyz.iov.cloud.mpt.common.core.text.Convert;
 import net.hwyz.iov.cloud.mpt.common.enums.BusinessType;
@@ -42,7 +42,7 @@ public class TspAccountController extends BaseController
     private final String prefix = "tsp/account";
 
     @Autowired
-    private ITspUserService userService;
+    private ITspAccountService accountService;
 
     @Autowired
     private ISysRoleService roleService;
@@ -66,10 +66,10 @@ public class TspAccountController extends BaseController
     @RequiresPermissions("tsp:account:list")
     @PostMapping("/list")
     @ResponseBody
-    public TableDataInfo list(TspUser user)
+    public TableDataInfo list(TspAccount account)
     {
         startPage();
-        List<TspUser> list = userService.selectUserList(user);
+        List<TspAccount> list = accountService.selectAccountList(account);
         return getDataTable(list);
     }
 
@@ -77,10 +77,10 @@ public class TspAccountController extends BaseController
     @RequiresPermissions("tsp:account:export")
     @PostMapping("/export")
     @ResponseBody
-    public AjaxResult export(TspUser user)
+    public AjaxResult export(TspAccount user)
     {
-        List<TspUser> list = userService.selectUserList(user);
-        ExcelUtil<TspUser> util = new ExcelUtil<>(TspUser.class);
+        List<TspAccount> list = accountService.selectAccountList(user);
+        ExcelUtil<TspAccount> util = new ExcelUtil<>(TspAccount.class);
         return util.exportExcel(list, "账号数据");
     }
 
@@ -92,7 +92,7 @@ public class TspAccountController extends BaseController
     {
         ExcelUtil<SysUser> util = new ExcelUtil<SysUser>(SysUser.class);
         List<SysUser> userList = util.importExcel(file.getInputStream());
-        String message = userService.importUser(userList, updateSupport, getLoginName());
+        String message = accountService.importUser(userList, updateSupport, getLoginName());
         return AjaxResult.success(message);
     }
 
@@ -127,15 +127,15 @@ public class TspAccountController extends BaseController
     {
         deptService.checkDeptDataScope(user.getDeptId());
         roleService.checkRoleDataScope(user.getRoleIds());
-        if (!userService.checkLoginNameUnique(user))
+        if (!accountService.checkLoginNameUnique(user))
         {
             return error("新增用户'" + user.getLoginName() + "'失败，登录账号已存在");
         }
-        else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user))
+        else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !accountService.checkPhoneUnique(user))
         {
             return error("新增用户'" + user.getLoginName() + "'失败，手机号码已存在");
         }
-        else if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user))
+        else if (StringUtils.isNotEmpty(user.getEmail()) && !accountService.checkEmailUnique(user))
         {
             return error("新增用户'" + user.getLoginName() + "'失败，邮箱账号已存在");
         }
@@ -143,7 +143,7 @@ public class TspAccountController extends BaseController
         user.setPassword(passwordService.encryptPassword(user.getLoginName(), user.getPassword(), user.getSalt()));
         user.setPwdUpdateDate(DateUtils.getNowDate());
         user.setCreateBy(getLoginName());
-        return toAjax(userService.insertUser(user));
+        return toAjax(accountService.insertUser(user));
     }
 
     /**
@@ -154,7 +154,7 @@ public class TspAccountController extends BaseController
     public String edit(@PathVariable("userId") Long userId, ModelMap mmap)
     {
         List<SysRole> roles = roleService.selectRolesByUserId(userId);
-        mmap.put("user", userService.selectUserById(userId));
+        mmap.put("user", accountService.selectUserById(userId));
         mmap.put("roles", SysUser.isAdmin(userId) ? roles : roles.stream().filter(r -> !r.isAdmin()).collect(Collectors.toList()));
         mmap.put("posts", postService.selectPostsByUserId(userId));
         return prefix + "/edit";
@@ -167,9 +167,9 @@ public class TspAccountController extends BaseController
     @GetMapping("/view/{userId}")
     public String view(@PathVariable("userId") Long userId, ModelMap mmap)
     {
-        mmap.put("user", userService.selectUserById(userId));
-        mmap.put("roleGroup", userService.selectUserRoleGroup(userId));
-        mmap.put("postGroup", userService.selectUserPostGroup(userId));
+        mmap.put("user", accountService.selectUserById(userId));
+        mmap.put("roleGroup", accountService.selectUserRoleGroup(userId));
+        mmap.put("postGroup", accountService.selectUserPostGroup(userId));
         return prefix + "/view";
     }
 
@@ -182,31 +182,31 @@ public class TspAccountController extends BaseController
     @ResponseBody
     public AjaxResult editSave(@Validated SysUser user)
     {
-        userService.checkUserAllowed(user);
+        accountService.checkUserAllowed(user);
         deptService.checkDeptDataScope(user.getDeptId());
         roleService.checkRoleDataScope(user.getRoleIds());
-        if (!userService.checkLoginNameUnique(user))
+        if (!accountService.checkLoginNameUnique(user))
         {
             return error("修改用户'" + user.getLoginName() + "'失败，登录账号已存在");
         }
-        else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !userService.checkPhoneUnique(user))
+        else if (StringUtils.isNotEmpty(user.getPhonenumber()) && !accountService.checkPhoneUnique(user))
         {
             return error("修改用户'" + user.getLoginName() + "'失败，手机号码已存在");
         }
-        else if (StringUtils.isNotEmpty(user.getEmail()) && !userService.checkEmailUnique(user))
+        else if (StringUtils.isNotEmpty(user.getEmail()) && !accountService.checkEmailUnique(user))
         {
             return error("修改用户'" + user.getLoginName() + "'失败，邮箱账号已存在");
         }
         user.setUpdateBy(getLoginName());
         AuthorizationUtils.clearAllCachedAuthorizationInfo();
-        return toAjax(userService.updateUser(user));
+        return toAjax(accountService.updateUser(user));
     }
 
     @RequiresPermissions("tsp:user:resetPwd")
     @GetMapping("/resetPwd/{userId}")
     public String resetPwd(@PathVariable("userId") Long userId, ModelMap mmap)
     {
-        mmap.put("user", userService.selectUserById(userId));
+        mmap.put("user", accountService.selectUserById(userId));
         return prefix + "/resetPwd";
     }
 
@@ -216,14 +216,14 @@ public class TspAccountController extends BaseController
     @ResponseBody
     public AjaxResult resetPwdSave(SysUser user)
     {
-        userService.checkUserAllowed(user);
+        accountService.checkUserAllowed(user);
         user.setSalt(ShiroUtils.randomSalt());
         user.setPassword(passwordService.encryptPassword(user.getLoginName(), user.getPassword(), user.getSalt()));
-        if (userService.resetUserPwd(user) > 0)
+        if (accountService.resetUserPwd(user) > 0)
         {
             if (ShiroUtils.getUserId().longValue() == user.getUserId().longValue())
             {
-                setSysUser(userService.selectUserById(user.getUserId()));
+                setSysUser(accountService.selectUserById(user.getUserId()));
             }
             return success();
         }
@@ -236,7 +236,7 @@ public class TspAccountController extends BaseController
     @GetMapping("/authRole/{userId}")
     public String authRole(@PathVariable("userId") Long userId, ModelMap mmap)
     {
-        SysUser user = userService.selectUserById(userId);
+        SysUser user = accountService.selectUserById(userId);
         // 获取用户所属的角色列表
         List<SysRole> roles = roleService.selectRolesByUserId(userId);
         mmap.put("user", user);
@@ -254,7 +254,7 @@ public class TspAccountController extends BaseController
     public AjaxResult insertAuthRole(Long userId, Long[] roleIds)
     {
         roleService.checkRoleDataScope(roleIds);
-        userService.insertUserAuth(userId, roleIds);
+        accountService.insertUserAuth(userId, roleIds);
         AuthorizationUtils.clearAllCachedAuthorizationInfo();
         return success();
     }
@@ -269,7 +269,7 @@ public class TspAccountController extends BaseController
         {
             return error("当前用户不能删除");
         }
-        return toAjax(userService.deleteUserByIds(ids));
+        return toAjax(accountService.deleteUserByIds(ids));
     }
 
     /**
@@ -279,7 +279,7 @@ public class TspAccountController extends BaseController
     @ResponseBody
     public boolean checkLoginNameUnique(SysUser user)
     {
-        return userService.checkLoginNameUnique(user);
+        return accountService.checkLoginNameUnique(user);
     }
 
     /**
@@ -289,7 +289,7 @@ public class TspAccountController extends BaseController
     @ResponseBody
     public boolean checkPhoneUnique(SysUser user)
     {
-        return userService.checkPhoneUnique(user);
+        return accountService.checkPhoneUnique(user);
     }
 
     /**
@@ -299,7 +299,7 @@ public class TspAccountController extends BaseController
     @ResponseBody
     public boolean checkEmailUnique(SysUser user)
     {
-        return userService.checkEmailUnique(user);
+        return accountService.checkEmailUnique(user);
     }
 
     /**
@@ -311,8 +311,8 @@ public class TspAccountController extends BaseController
     @ResponseBody
     public AjaxResult changeStatus(SysUser user)
     {
-        userService.checkUserAllowed(user);
-        return toAjax(userService.changeStatus(user));
+        accountService.checkUserAllowed(user);
+        return toAjax(accountService.changeStatus(user));
     }
 
     /**

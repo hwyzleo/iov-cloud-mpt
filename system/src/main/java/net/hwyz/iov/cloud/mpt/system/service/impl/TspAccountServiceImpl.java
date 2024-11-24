@@ -4,7 +4,7 @@ import net.hwyz.iov.cloud.mpt.common.annotation.DataScope;
 import net.hwyz.iov.cloud.mpt.common.constant.UserConstants;
 import net.hwyz.iov.cloud.mpt.common.core.domain.entity.SysRole;
 import net.hwyz.iov.cloud.mpt.common.core.domain.entity.SysUser;
-import net.hwyz.iov.cloud.mpt.common.core.domain.entity.TspUser;
+import net.hwyz.iov.cloud.mpt.common.core.domain.entity.TspAccount;
 import net.hwyz.iov.cloud.mpt.common.core.text.Convert;
 import net.hwyz.iov.cloud.mpt.common.exception.ServiceException;
 import net.hwyz.iov.cloud.mpt.common.utils.ExceptionUtil;
@@ -18,7 +18,7 @@ import net.hwyz.iov.cloud.mpt.system.domain.SysUserRole;
 import net.hwyz.iov.cloud.mpt.system.mapper.*;
 import net.hwyz.iov.cloud.mpt.system.service.ISysConfigService;
 import net.hwyz.iov.cloud.mpt.system.service.ISysDeptService;
-import net.hwyz.iov.cloud.mpt.system.service.ITspUserService;
+import net.hwyz.iov.cloud.mpt.system.service.ITspAccountService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,16 +33,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * TSP用户 业务层处理
+ * TSP账号 业务层处理
  *
  * @author hwyz_leo
  */
 @Service
-public class TspUserServiceImpl implements ITspUserService {
-    private static final Logger log = LoggerFactory.getLogger(TspUserServiceImpl.class);
+public class TspAccountServiceImpl implements ITspAccountService {
+    private static final Logger log = LoggerFactory.getLogger(TspAccountServiceImpl.class);
 
     @Autowired
-    private TspUserMapper userMapper;
+    private TspAccountMapper userMapper;
 
     @Autowired
     private SysRoleMapper roleMapper;
@@ -66,15 +66,15 @@ public class TspUserServiceImpl implements ITspUserService {
     protected Validator validator;
 
     /**
-     * 根据条件分页查询用户列表
+     * 根据条件分页查询账号列表
      *
-     * @param user 用户信息
-     * @return 用户信息集合信息
+     * @param account 账号信息
+     * @return 账号信息集合信息
      */
     @Override
     @DataScope(deptAlias = "d", userAlias = "u")
-    public List<TspUser> selectUserList(TspUser user) {
-        return userMapper.selectUserList(user);
+    public List<TspAccount> selectAccountList(TspAccount account) {
+        return userMapper.selectAccountList(account);
     }
 
     /**

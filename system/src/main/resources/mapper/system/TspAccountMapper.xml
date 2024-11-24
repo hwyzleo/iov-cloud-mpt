@@ -2,9 +2,9 @@
 <!DOCTYPE mapper
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="net.hwyz.iov.cloud.mpt.system.mapper.TspUserMapper">
+<mapper namespace="net.hwyz.iov.cloud.mpt.system.mapper.TspAccountMapper">
 
-    <resultMap type="TspUser" id="SysUserResult">
+    <resultMap type="TspAccount" id="TspAccountResult">
         <id property="id" column="id"/>
         <result property="accountId" column="account_id"/>
         <result property="username" column="username"/>
@@ -22,25 +22,6 @@
         <result property="createBy" column="create_by"/>
         <result property="updateTime" column="modify_time"/>
         <result property="updateBy" column="modify_by"/>
-    </resultMap>
-
-    <resultMap id="deptResult" type="SysDept">
-        <id property="deptId" column="dept_id"/>
-        <result property="parentId" column="parent_id"/>
-        <result property="deptName" column="dept_name"/>
-        <result property="ancestors" column="ancestors"/>
-        <result property="orderNum" column="order_num"/>
-        <result property="leader" column="leader"/>
-        <result property="status" column="dept_status"/>
-    </resultMap>
-
-    <resultMap id="RoleResult" type="SysRole">
-        <id property="roleId" column="role_id"/>
-        <result property="roleName" column="role_name"/>
-        <result property="roleKey" column="role_key"/>
-        <result property="roleSort" column="role_sort"/>
-        <result property="dataScope" column="data_scope"/>
-        <result property="status" column="role_status"/>
     </resultMap>
 
     <sql id="selectUserVo">
@@ -84,7 +65,7 @@
                  left join sys_role r on r.role_id = ur.role_id
     </sql>
 
-    <select id="selectUserList" parameterType="TspUser" resultMap="SysUserResult">
+    <select id="selectAccountList" parameterType="TspAccount" resultMap="TspAccountResult">
         select a.id, a.account_id, a.username, a.country_region_code, a.mobile, a.email, a.nickname, a.avatar, a.gender,
         a.reg_source, a.enable, a.row_valid, a.description, a.create_time, a.create_by, a.modify_time, a.modify_by
         from db_account.tb_account a
@@ -111,7 +92,7 @@
         ${params.dataScope}
     </select>
 
-    <select id="selectAllocatedList" parameterType="SysUser" resultMap="SysUserResult">
+    <select id="selectAllocatedList" parameterType="SysUser" resultMap="TspAccountResult">
         select distinct u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber,
         u.status, u.create_time
         from sys_user u
@@ -129,7 +110,7 @@
         ${params.dataScope}
     </select>
 
-    <select id="selectUnallocatedList" parameterType="SysUser" resultMap="SysUserResult">
+    <select id="selectUnallocatedList" parameterType="SysUser" resultMap="TspAccountResult">
         select distinct u.user_id, u.dept_id, u.login_name, u.user_name, u.user_type, u.email, u.avatar, u.phonenumber,
         u.status, u.create_time
         from sys_user u
@@ -149,43 +130,43 @@
         ${params.dataScope}
     </select>
 
-    <select id="selectUserByLoginName" parameterType="String" resultMap="SysUserResult">
+    <select id="selectUserByLoginName" parameterType="String" resultMap="TspAccountResult">
         <include refid="selectUserVo"/>
         where u.login_name = #{userName} and u.del_flag = '0'
     </select>
 
-    <select id="selectUserByPhoneNumber" parameterType="String" resultMap="SysUserResult">
+    <select id="selectUserByPhoneNumber" parameterType="String" resultMap="TspAccountResult">
         <include refid="selectUserVo"/>
         where u.phonenumber = #{phonenumber} and u.del_flag = '0'
     </select>
 
-    <select id="selectUserByEmail" parameterType="String" resultMap="SysUserResult">
+    <select id="selectUserByEmail" parameterType="String" resultMap="TspAccountResult">
         <include refid="selectUserVo"/>
         where u.email = #{email} and u.del_flag = '0'
     </select>
 
-    <select id="checkLoginNameUnique" parameterType="String" resultMap="SysUserResult">
+    <select id="checkLoginNameUnique" parameterType="String" resultMap="TspAccountResult">
         select user_id, login_name
         from sys_user
         where login_name = #{loginName}
           and del_flag = '0' limit 1
     </select>
 
-    <select id="checkPhoneUnique" parameterType="String" resultMap="SysUserResult">
+    <select id="checkPhoneUnique" parameterType="String" resultMap="TspAccountResult">
         select user_id, phonenumber
         from sys_user
         where phonenumber = #{phonenumber}
           and del_flag = '0' limit 1
     </select>
 
-    <select id="checkEmailUnique" parameterType="String" resultMap="SysUserResult">
+    <select id="checkEmailUnique" parameterType="String" resultMap="TspAccountResult">
         select user_id, email
         from sys_user
         where email = #{email}
           and del_flag = '0' limit 1
     </select>
 
-    <select id="selectUserById" parameterType="Long" resultMap="SysUserResult">
+    <select id="selectUserById" parameterType="Long" resultMap="TspAccountResult">
         <include refid="selectUserVo"/>
         where u.user_id = #{userId}
     </select>

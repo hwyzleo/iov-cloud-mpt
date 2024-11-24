@@ -6,11 +6,11 @@ import org.apache.commons.lang3.builder.ToStringBuilder;
 import org.apache.commons.lang3.builder.ToStringStyle;
 
 /**
- * TSP用户对象 tsp_user
+ * TSP账号对象 tsp_account
  *
  * @author hwyz_leo
  */
-public class TspUser extends BaseEntity {
+public class TspAccount extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     /**
@@ -80,11 +80,11 @@ public class TspUser extends BaseEntity {
      */
     private Boolean rowValid;
 
-    public TspUser() {
+    public TspAccount() {
 
     }
 
-    public TspUser(String accountId) {
+    public TspAccount(String accountId) {
         this.accountId = accountId;
     }
 
@@ -187,6 +187,7 @@ public class TspUser extends BaseEntity {
     @Override
     public String toString() {
         return new ToStringBuilder(this, ToStringStyle.MULTI_LINE_STYLE)
+                .append("id", getId())
                 .append("accountId", getAccountId())
                 .append("username", getUsername())
                 .append("countryRegionCode", getCountryRegionCode())
