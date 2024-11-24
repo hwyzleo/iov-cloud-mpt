@@ -69,7 +69,6 @@
 <th:block th:include="include :: footer"/>
 <th:block th:include="include :: layout-latest-js"/>
 <script th:inline="javascript">
-    var editFlag = [[${@permission.hasPermi('tsp:client:edit')}]];
     var removeFlag = [[${@permission.hasPermi('tsp:client:remove')}]];
     var prefix = ctx + "tsp/client";
 
@@ -115,7 +114,13 @@
                 },
                 {
                     field: 'clientType',
-                    title: '客户端类型'
+                    title: '客户端类型',
+                    formatter: function (value, row, index) {
+                        let dictItem = [[${@dict.getType('client_type')}]].find(function (item) {
+                            return item.dictValue === value;
+                        });
+                        return dictItem? dictItem.dictLabel : value;
+                    }
                 },
                 {
                     field: 'oem',
@@ -173,7 +178,7 @@
     });
 
     $('#btnRefresh').click(function () {
-        queryUserList();
+        queryClientList();
     });
 
     /* 自定义重置-表单重置/隐藏框/树节点选择色/搜索 */
