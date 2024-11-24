@@ -18,7 +18,10 @@
                                 客户端ID：<input type="text" name="clientId"/>
                             </li>
                             <li>
-                                客户端类型：<input type="text" name="clientType"/>
+                                客户端类型：<select name="clientType" th:with="type=${@dict.getType('client_type')}">
+                                <option value="">所有</option>
+                                <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                            </select>
                             </li>
                             <li>
                                 IP地址：<input type="text" name="ip"/>
