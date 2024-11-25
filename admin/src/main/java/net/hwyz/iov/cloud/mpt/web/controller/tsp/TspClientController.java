@@ -7,7 +7,6 @@ import net.hwyz.iov.cloud.mpt.common.core.domain.entity.TspClient;
 import net.hwyz.iov.cloud.mpt.common.core.page.TableDataInfo;
 import net.hwyz.iov.cloud.mpt.common.enums.BusinessType;
 import net.hwyz.iov.cloud.mpt.common.utils.poi.ExcelUtil;
-import net.hwyz.iov.cloud.mpt.framework.shiro.util.AuthorizationUtils;
 import net.hwyz.iov.cloud.mpt.system.service.ITspClientService;
 import org.apache.shiro.authz.annotation.RequiresPermissions;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +32,7 @@ public class TspClientController extends BaseController {
 
     @RequiresPermissions("tsp:client:view")
     @GetMapping()
-    public String account() {
+    public String client() {
         return prefix + "/client";
     }
 
@@ -75,7 +74,6 @@ public class TspClientController extends BaseController {
     @ResponseBody
     public AjaxResult editSave(@Validated TspClient client) {
         client.setUpdateBy(getLoginName());
-        AuthorizationUtils.clearAllCachedAuthorizationInfo();
         return toAjax(clientService.updateClient(client));
     }
 

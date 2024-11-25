@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="net.hwyz.iov.cloud.mpt.system.mapper.TspTokenMapper">
+
+    <resultMap type="TspToken" id="TspTokenResult">
+        <id property="id" column="id"/>
+        <result property="accountId" column="account_id"/>
+        <result property="clientType" column="client_type"/>
+        <result property="clientId" column="client_id"/>
+        <result property="vin" column="vin"/>
+        <result property="scope" column="scope"/>
+        <result property="issueTime" column="issue_time"/>
+        <result property="accessToken" column="access_token"/>
+        <result property="accessTokenExpires" column="access_token_expires"/>
+        <result property="refreshToken" column="refresh_token"/>
+        <result property="refreshTokenExpires" column="refresh_token_expires"/>
+        <result property="rowValid" column="row_valid"/>
+        <result property="remark" column="description"/>
+        <result property="createTime" column="create_time"/>
+        <result property="createBy" column="create_by"/>
+        <result property="updateTime" column="modify_time"/>
+        <result property="updateBy" column="modify_by"/>
+    </resultMap>
+
+    <sql id="selectTokenVo">
+        select t.id,
+               t.account_id,
+               t.client_type,
+               t.client_id,
+               t.vin,
+               t.scope,
+               t.issue_time,
+               t.access_token,
+               t.access_token_expires,
+               t.refresh_token,
+               t.refresh_token_expires,
+               t.row_valid,
+               t.description,
+               t.create_time,
+               t.create_by,
+               t.modify_time,
+               t.modify_by
+        from db_account.tb_token t
+    </sql>
+
+    <select id="selectTokenList" parameterType="TspToken" resultMap="TspTokenResult">
+        <include refid="selectTokenVo"/>
+        where t.row_valid = 1
+        <if test="accountId != null and accountId != ''">
+            AND t.account_id = #{accountId}
+        </if>
+        <if test="clientType != null and clientType != ''">
+            AND t.client_type = #{clientType}
+        </if>
+        <if test="clientId != null and clientId != ''">
+            AND t.client_id = #{clientId}
+        </if>
+        <if test="vin != null and vin != ''">
+            AND t.vin = #{vin}
+        </if>
+        <if test="accessToken != null and accessToken != ''">
+            AND t.access_token = #{accessToken}
+        </if>
+        <if test="refreshToken != null and refreshToken != ''">
+            AND t.refresh_token = #{refreshToken}
+        </if>
+        <if test="params.beginTime != null and params.beginTime != ''"><!-- 开始时间检索 -->
+            AND date_format(t.issue_time,'%Y%m%d') &gt;= date_format(#{params.beginTime},'%Y%m%d')
+        </if>
+        <if test="params.endTime != null and params.endTime != ''"><!-- 结束时间检索 -->
+            AND date_format(t.issue_time,'%Y%m%d') &lt;= date_format(#{params.endTime},'%Y%m%d')
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+    <select id="selectTokenById" parameterType="Long" resultMap="TspTokenResult">
+        <include refid="selectTokenVo"/>
+        where c.id = #{id}
+    </select>
+
+    <delete id="deleteTokenById" parameterType="Long">
+        update db_account.tb_token
+        set row_valid = 0
+        where id = #{id}
+    </delete>
+
+    <delete id="deleteTokenByIds" parameterType="Long">
+        update db_account.tb_token set row_valid = 0 where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <update id="updateToken" parameterType="TspToken">
+        update db_account.tb_token
+        <set>
+            <if test="scope != null and scope != ''">scope = #{scope},</if>
+            <if test="accessTokenExpires != null">access_token_expires = #{accessTokenExpires},</if>
+            <if test="refreshTokenExpires != null">refresh_token_expires = #{refreshTokenExpires},</if>
+            <if test="remark != null">description = #{remark},</if>
+            modify_time = sysdate(),
+            row_version = row_version + 1
+        </set>
+        where id = #{id}
+    </update>
+
+</mapper> 
